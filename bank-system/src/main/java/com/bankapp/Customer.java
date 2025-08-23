@@ -15,4 +15,6 @@ public class Customer {
         this.documentNumber = documentNumber;
     }
 
+    public String getId() {
+    }
 }
