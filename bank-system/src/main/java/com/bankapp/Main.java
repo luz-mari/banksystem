@@ -36,5 +36,33 @@ public class Main {
 
         // Mostrar todos después de eliminar
         customerService.showAllcustomers();
+
+        // Crear servicio de cuentas bancarias
+        BankAccountService accountService = new BankAccountService(customerService);
+
+        // Abrir cuentas para clientes existentes
+        BankAccount cuentaAhorros = accountService.openAccount("9876543", AccountType.SAVINGS);
+        BankAccount cuentaCorriente = accountService.openAccount("3456789", AccountType.CHECKING);
+
+        // Prueba de depósito
+        accountService.deposit(cuentaAhorros.getAccountNumber(), 1000.0);
+        System.out.println("Saldo después de depósito (Ahorros): " + cuentaAhorros.getBalance());
+
+        // Prueba de retiro válido en cuenta de ahorros
+        boolean retiroExitoso = accountService.withdraw(cuentaAhorros.getAccountNumber(), 500.0);
+        System.out.println("Retiro exitoso (Ahorros): " + retiroExitoso + ", Saldo: " + cuentaAhorros.getBalance());
+
+        // Prueba de retiro inválido en cuenta de ahorros (excede saldo)
+        retiroExitoso = accountService.withdraw(cuentaAhorros.getAccountNumber(), 600.0);
+        System.out.println("Retiro excede saldo (Ahorros): " + retiroExitoso + ", Saldo: " + cuentaAhorros.getBalance());
+
+        // Prueba de retiro en cuenta corriente (puede ir hasta -500)
+        accountService.deposit(cuentaCorriente.getAccountNumber(), 200.0);
+        retiroExitoso = accountService.withdraw(cuentaCorriente.getAccountNumber(), 600.0); // Queda en -400
+        System.out.println("Retiro en cuenta corriente: " + retiroExitoso + ", Saldo: " + cuentaCorriente.getBalance());
+
+        // Prueba de retiro que excede límite de sobregiro
+        retiroExitoso = accountService.withdraw(cuentaCorriente.getAccountNumber(), 200.0); // Intento ir a -600
+        System.out.println("Retiro excede sobregiro (Corriente): " + retiroExitoso + ", Saldo: " + cuentaCorriente.getBalance());
     }
 }
